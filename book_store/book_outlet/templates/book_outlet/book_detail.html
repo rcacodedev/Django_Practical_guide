@@ -1,18 +1,17 @@
 {% extends "book_outlet/base.html" %}
 
-{% block title %}{{book.title}}{% endblock %}
-
-{% block content %}
-    <a href="{% url 'index' %}">Home</a>
-    <h1>{{book.title}}</h1>
-    <h2>Author: {{book.author}}</h2>
-    <p>The book has a rating of {{book.rating}}
-
-    {% if book.is_bestselling %}
-        and is one of the best selling books
-    {% else %}
-        and is not one of the best selling books    
-    {% endif %}
-    </p>
+{% block title %}
+  {{ title }}
 {% endblock %}
 
+{% block content %}
+  <h1>{{ title }}</h1>
+  <h2>{{ author }}</h2>
+  <p>The book has a rating of {{ rating }} 
+  {% if is_bestseller %}
+    and is a bestseller.
+  {% else %}
+    but isn't a bestseller.
+  {% endif %}
+  </p>
+{% endblock %}
