@@ -1,20 +1,23 @@
+from typing import Any
+from django.db.models.query import QuerySet
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from .forms import ReviewForm
 from django.views import View
-
-
-class Review(View):
-    def get(self, request):
-        form = ReviewForm()
-        return render(request, "reviews/review.html", {"form": form})
-    
-    def post(self, request):
-        form = ReviewForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect("/thankyou/")
-
+from django.views.generic.base import TemplateView
+from .models import Review
+from django.views.generic import ListView, DetailView
+from django.views.generic.edit import CreateView, FormView
+# class ReviewView(View):
+    # def get(self, request):
+        # form = ReviewForm()
+        # return render(request, "reviews/review.html", {"form": form})
+    # 
+    # def post(self, request):
+        # form = ReviewForm(request.POST)
+        # if form.is_valid():
+            # form.save()
+            # return HttpResponseRedirect("/thankyou/")
 # def reviews(request):
     # if request.method == "POST":
         # form = ReviewForm(request.POST)
@@ -27,5 +30,60 @@ class Review(View):
         # form = ReviewForm()
     # return render(request, "reviews/review.html", {"form": form})
 
-def thankyou(request):
-    return render(request, "reviews/thankyou.html") 
+# class ReviewView(FormView):
+    # template_name = "reviews/review.html"
+    # form_class = ReviewForm
+    # success_url = "/thankyou/"
+# 
+    # def form_valid(self, form):
+        # form.save()
+        # return super().form_valid(form)
+
+class ReviewView(CreateView):
+    model = Review
+    template_name = "reviews/review.html"
+    form_class = ReviewForm
+    success_url = "/thankyou/"
+
+# def thankyou(request):
+    # return render(request, "reviews/thankyou.html") 
+class Thankyou(TemplateView):
+    template_name = "reviews/thankyou.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["message"] = "Your review was submitted successfully!"
+        return context
+
+# class ReviewList(TemplateView):
+    # template_name = "reviews/review_list.html"
+# 
+    # def get_context_data(self, **kwargs):
+        # context = super().get_context_data(**kwargs)
+        # reviews = Review.objects.all()
+        # context["reviews"] = reviews
+        # return context
+
+class ReviewList(ListView):
+    model = Review
+    template_name = "reviews/review_list.html"
+    context_object_name = "reviews"
+
+    def get_queryset(self):
+        base_query = super().get_queryset()
+        data = base_query.filter(rating__gt=4)
+        return data
+
+# class SingleReview(TemplateView):
+    # template_name = "reviews/single_review.html"
+# 
+    # def get_context_data(self, **kwargs):
+        # context = super().get_context_data(**kwargs)
+        # review = Review.objects.get(pk=kwargs["pk"])
+        # context["review"] = review
+        # return context
+    
+class SingleReview(DetailView):
+    model = Review
+    template_name = "reviews/single_review.html"
+    context_object_name = "review"
