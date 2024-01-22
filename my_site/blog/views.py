@@ -54,7 +54,8 @@ class SinglePostView(View):
         context = {"post": post,
                    "post_tags": post.tag.all(),
                    "comment_form": CommentForm(),
-                   "comments": post.comments.all().order_by("-id")}
+                   "comments": post.comments.all().order_by("-id"),
+                   "saved_for_later": self.is_stored_post(request, post.id)}
         
         return render(request, "blog/post_detail.html", context)
     
