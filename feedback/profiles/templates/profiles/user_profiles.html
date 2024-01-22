@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profiles</title>
+    {% comment %} <link rel="stylesheet" href="{% static "profiles/styles.css" %}"> {% endcomment %}
+</head>
+<body>
+    <h1>User Profiles</h1>
+    <ul>
+        {% for profile in profiles %}
+            <li>
+                <img src="{{ profile.image.url }}" alt="Profile image">
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

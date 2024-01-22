@@ -8,6 +8,8 @@ from django.views.generic.base import TemplateView
 from .models import Review
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, FormView
+from django.http import HttpResponseBadRequest
+
 # class ReviewView(View):
     # def get(self, request):
         # form = ReviewForm()
@@ -87,3 +89,21 @@ class SingleReview(DetailView):
     model = Review
     template_name = "reviews/single_review.html"
     context_object_name = "review"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        loaded_review = self.object
+        request = self.request
+        favorite_id = request.session.get("favorite_review")
+        context["is_favorite"] = favorite_id == str(loaded_review.id)
+        return context
+
+class AddFavoriteView(View):
+    def post(self, request):
+        review_id = request.POST.get("review_id")
+
+        if review_id is not None:
+            request.session["favorite_review"] = review_id
+            return HttpResponseRedirect("/reviews/" + review_id)
+        else:
+            return HttpResponseBadRequest("No se proporcionó 'review_id' en la solicitud.")
